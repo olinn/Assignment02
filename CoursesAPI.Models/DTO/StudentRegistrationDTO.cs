@@ -1,6 +1,6 @@
 ﻿namespace CoursesAPI.Models
 {
-    public class StudentRegistration
+    public class StudentRegistrationDTO
     {
         public int ID { get; set; }
 

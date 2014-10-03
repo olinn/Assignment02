@@ -44,5 +44,10 @@ namespace CoursesAPI.Services.Services
 			// TODO
 			return null;
 		}
+
+        public AssignmentDTO AddAssignmentOnCourse(int courseInstanceID, AddAssignmentViewModel model)
+        {
+            return null;
+        }
 	}
 }

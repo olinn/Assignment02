@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
 using System.Web.Http;
 using CoursesAPI.Models;
 using CoursesAPI.Services.DataAccess;
@@ -17,7 +19,7 @@ namespace CoursesAPI.Controllers
 			_service = new CoursesServiceProvider(new UnitOfWork<AppDataContext>());
 		}
 
-		[Route("{courseInstanceID}/teachers")]
+		[Route("{courseInstanceID:int}/teachers")]
 		public List<Person> GetCourseTeachers(int courseInstanceID)
 		{
 			return _service.GetCourseTeachers(courseInstanceID);
@@ -28,5 +30,14 @@ namespace CoursesAPI.Controllers
 		{
 			return _service.GetSemesterCourses(semester);
 		}
+
+        [HttpPost]
+        [Route("{courseInstanceID:int}/assignment/")]
+        public  HttpResponseMessage AddAssignmentOnCourse(int courseInstanceID, AddAssignmentViewModel model)
+        {
+
+            return Request.CreateResponse(HttpStatusCode.Created, _service.AddAssignmentOnCourse(courseInstanceID, model));
+
+        }
 	}
 }
