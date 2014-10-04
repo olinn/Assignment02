@@ -30,7 +30,11 @@ namespace CoursesAPI.Services.Services
 		public List<Person> GetCourseTeachers(int courseInstanceID)
 		{
 			// TODO:
-			return null;
+		    var result = (from t in _teacherRegistrations.All()
+		        join p in _persons.All() on t.SSN equals p.SSN
+		        where t.CourseInstanceID == courseInstanceID
+		        select p).ToList();
+			return result;
 		}
 
 		public List<CourseInstanceDTO> GetCourseInstancesOnSemester(string semester)
