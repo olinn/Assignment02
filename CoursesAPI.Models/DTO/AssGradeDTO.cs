@@ -1,4 +1,6 @@
-﻿namespace CoursesAPI.Models
+﻿
+
+namespace CoursesAPI.Models
 {
     public class AssGradeDTO
     {

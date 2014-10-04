@@ -2,7 +2,7 @@
 
 namespace CoursesAPI.Models
 {
-    class AssTagDTO
+    public class AssTagDTO
     {
 
         public string AssignmentTag { get; set; }

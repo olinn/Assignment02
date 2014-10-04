@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseAPI", "CoursesAPI\CourseAPI.csproj", "{E348ABBA-82C5-43D8-9A81-F13B590D5C0D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoursesAPI", "CoursesAPI\CoursesAPI.csproj", "{E348ABBA-82C5-43D8-9A81-F13B590D5C0D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoursesAPI.Models", "CoursesAPI.Models\CoursesAPI.Models.csproj", "{6CD2D6DF-D302-4E41-930D-DC9AE1384C92}"
 EndProject

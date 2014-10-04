@@ -5,7 +5,7 @@ using System.Web.Http;
 using CoursesAPI.Models;
 using CoursesAPI.Services.DataAccess;
 using CoursesAPI.Services.Models.Entities;
-using CoursesAPI.Services.Services;
+using CoursesAPI.Services;
 
 namespace CoursesAPI.Controllers
 {
@@ -43,7 +43,7 @@ namespace CoursesAPI.Controllers
         [Route("{courseInstanceID:int}/addTag")]
         public HttpResponseMessage AddAssignmentTag(int courseInstanceID, AddAssignmentTagViewModel model)
         {
-            return Request.CreateResponse(HttpStatusCode.Created, _service.AddAssignmentOnCourse(courseInstanceID, model));
+            return Request.CreateResponse(HttpStatusCode.Created, _service.AddAssignmentTag(courseInstanceID, model));
         }
 	}
 }

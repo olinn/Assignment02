@@ -7,7 +7,7 @@ using CoursesAPI.Services.DataAccess;
 using CoursesAPI.Services.Models.Entities;
 using CoursesAPI.Services.Extensions;
 
-namespace CoursesAPI.Services.Services
+namespace CoursesAPI
 {
 	public class CoursesServiceProvider
 	{
