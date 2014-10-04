@@ -1,11 +1,12 @@
-﻿namespace CoursesAPI.Services.Models.Entities
+﻿using System.ComponentModel.DataAnnotations;
+namespace CoursesAPI.Services.Models.Entities
 {
     public class Assignment
     {
         /// <summary>
         /// A Database generated ID
         /// </summary>
-
+        [Key]
         public int ID { get; set; }
 
         /// <summary>
@@ -26,6 +27,11 @@
         /// <summary>
         /// Assignment tag references a tag set in the AssignmentTags table
         /// </summary>
-        public string AssTag { get; set; }
+        public string Tag { get; set; }
+
+        /// <summary>
+        /// Percentage value of assignment regarding total grade for course
+        /// </summary>
+        public double Percentage { get; set; }
     }
 }

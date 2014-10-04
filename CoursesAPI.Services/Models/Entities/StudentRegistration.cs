@@ -1,10 +1,12 @@
-﻿namespace CoursesAPI.Services.Models.Entities
+﻿using System.ComponentModel.DataAnnotations;
+namespace CoursesAPI.Services.Models.Entities
 {
     public class StudentRegistration
     {
         /// <summary>
         /// Auto-generated ID from database
         /// </summary>
+        [Key]
         public int ID { get; set; }
 
         /// <summary>

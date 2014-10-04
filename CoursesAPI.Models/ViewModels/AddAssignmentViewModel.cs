@@ -19,13 +19,8 @@ namespace CoursesAPI.Models
         /// Percentage value of assignment
         /// </summary>
         [Required]
-        public int Percentage { get; set; }
+        public double Percentage { get; set; }
 
-        /// <summary>
-        /// ID of Course Instance
-        /// </summary>
-        [Required]
-        public int CourseInstanceID { get; set; }
 
         /// <summary>
         /// Assignment TAG, to group assignments together if needed.

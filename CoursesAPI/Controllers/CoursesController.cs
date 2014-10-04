@@ -32,12 +32,18 @@ namespace CoursesAPI.Controllers
 		}
 
         [HttpPost]
-        [Route("{courseInstanceID:int}/assignment/")]
+        [Route("{courseInstanceID:int}/addAssignment/")]
         public  HttpResponseMessage AddAssignmentOnCourse(int courseInstanceID, AddAssignmentViewModel model)
         {
 
             return Request.CreateResponse(HttpStatusCode.Created, _service.AddAssignmentOnCourse(courseInstanceID, model));
+        }
 
+        [HttpPost]
+        [Route("{courseInstanceID:int}/addTag")]
+        public HttpResponseMessage AddAssignmentTag(int courseInstanceID, AddAssignmentTagViewModel model)
+        {
+            return Request.CreateResponse(HttpStatusCode.Created, _service.AddAssignmentOnCourse(courseInstanceID, model));
         }
 	}
 }
