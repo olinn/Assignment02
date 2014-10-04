@@ -37,9 +37,14 @@ namespace CoursesAPI.Services.Extensions
 
         public static AssTag GetAssignmentTag(this IRepository<AssTag> repo, string tag)
         {
+          
+          
             var assignmentTag = repo.All().SingleOrDefault(c => c.AssignmentTag == tag);
 
-            return assignmentTag;
+            if (assignmentTag == null)
+                return assignmentTag;
+            else
+                return assignmentTag;
         }
 
         

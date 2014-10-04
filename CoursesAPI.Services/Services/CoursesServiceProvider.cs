@@ -29,6 +29,7 @@ namespace CoursesAPI
 			_teacherRegistrations = _uow.GetRepository<TeacherRegistration>();
 			_persons              = _uow.GetRepository<Person>();
             _assignments          = _uow.GetRepository<Assignment>();
+            _assignmentTags       = _uow.GetRepository<AssTag>();
 		}
 
 		public List<Person> GetCourseTeachers(int courseInstanceID)
@@ -109,9 +110,31 @@ namespace CoursesAPI
             //Business rule 0: Operations on a course must use a valid course ID.
             var course = _courseInstances.GetCourseInstanceByID(courseInstanceID);
 
-            return null;
+            //Business rule 1: Tag cannot already exist
+            var assignmentTag = _assignmentTags.GetAssignmentTag(model.AssignmentTag);
 
-            
+            if (assignmentTag != null)
+            {
+                //Business rule 2: Tag must exist in AssignmentTag table
+                throw new ArgumentException("Assignment Tag already  exist!");
+            }
+            else
+            {
+                AssTag assT = new AssTag
+                {
+                    AssignmentTag = model.AssignmentTag,
+                    NoToGrade = model.NumberOfAssignments
+                };
+                _assignmentTags.Add(assT);
+                _uow.Save();
+
+            }
+
+            return new AssTagDTO
+            {
+                AssignmentTag = model.AssignmentTag,
+                NoToGrade = model.NumberOfAssignments
+            };           
 
         }
 
