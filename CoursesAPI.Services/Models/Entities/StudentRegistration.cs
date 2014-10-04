@@ -19,6 +19,10 @@ namespace CoursesAPI.Services.Models.Entities
         /// </summary>
         public int CourseInstanceID { get; set; }
 
+        /// <summary>
+        /// Status of the student. Shows if he's active or not
+        /// </summary>
+        public int Status { get; set; }
         
     }
 }

@@ -1,0 +1,27 @@
+﻿namespace CoursesAPI.Models
+{
+        /// <summary>
+        /// Each person in the school, be it a student or a teacher,
+        /// has a single Person object associated with him/her.
+        /// </summary>
+
+    public class PersonDTO
+    {
+        /// <summary>
+        /// A database-generated ID of the person.
+        /// </summary>
+        public int ID { get; set; }
+
+        /// <summary>
+        /// The SSN of the person.
+        /// </summary>
+        public string SSN { get; set; }
+
+        /// <summary>
+        /// The full name of the person.
+        /// </summary>
+        public string Name { get; set; }
+
+    }
+
+}

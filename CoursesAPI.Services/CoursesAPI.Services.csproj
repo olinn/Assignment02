@@ -56,6 +56,7 @@
     <Compile Include="DataAccess\IUnitOfWork.cs" />
     <Compile Include="DataAccess\Repository.cs" />
     <Compile Include="DataAccess\UnitOfWork.cs" />
+    <Compile Include="Exceptions\AppObjectNotFoundException.cs" />
     <Compile Include="Extensions\CourseExtensions.cs" />
     <Compile Include="Models\Entities\Assignment.cs" />
     <Compile Include="Models\Entities\AssTag.cs" />

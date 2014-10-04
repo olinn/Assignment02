@@ -20,7 +20,7 @@ namespace CoursesAPI.Controllers
 		}
 
 		[Route("{courseInstanceID:int}/teachers")]
-		public List<Person> GetCourseTeachers(int courseInstanceID)
+		public List<PersonDTO> GetCourseTeachers(int courseInstanceID)
 		{
 			return _service.GetCourseTeachers(courseInstanceID);
 		}

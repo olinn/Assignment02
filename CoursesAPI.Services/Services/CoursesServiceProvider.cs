@@ -4,6 +4,7 @@ using System.Data.Entity.Core.Objects.DataClasses;
 using System.Linq;
 using CoursesAPI.Models;
 using CoursesAPI.Services.DataAccess;
+using CoursesAPI.Services.Exceptions;
 using CoursesAPI.Services.Models.Entities;
 using CoursesAPI.Services.Extensions;
 
@@ -19,40 +20,93 @@ namespace CoursesAPI
 		private readonly IRepository<Person> _persons;
         private readonly IRepository<Assignment> _assignments;
         private readonly IRepository<AssTag> _assignmentTags;
+        private readonly IRepository<StudentRegistration> _studentRegistrations;
 
-		public CoursesServiceProvider(IUnitOfWork uow)
-		{
-			_uow = uow;
+        public CoursesServiceProvider(IUnitOfWork uow)
+        {
+            _uow = uow;
 
-			_courseInstances      = _uow.GetRepository<CourseInstance>();
-			_courseTemplates      = _uow.GetRepository<CourseTemplate>();
-			_teacherRegistrations = _uow.GetRepository<TeacherRegistration>();
-			_persons              = _uow.GetRepository<Person>();
-            _assignments          = _uow.GetRepository<Assignment>();
-            _assignmentTags       = _uow.GetRepository<AssTag>();
-		}
+            _courseInstances = _uow.GetRepository<CourseInstance>();
+            _courseTemplates = _uow.GetRepository<CourseTemplate>();
+            _teacherRegistrations = _uow.GetRepository<TeacherRegistration>();
+            _persons = _uow.GetRepository<Person>();
+            _studentRegistrations = _uow.GetRepository<StudentRegistration>();
+            _assignments = _uow.GetRepository<Assignment>();
 
-		public List<Person> GetCourseTeachers(int courseInstanceID)
-		{
-			// TODO:
-		    var result = (from t in _teacherRegistrations.All()
-		        join p in _persons.All() on t.SSN equals p.SSN
-		        where t.CourseInstanceID == courseInstanceID
-		        select p).ToList();
-			return result;
-		}
+        }
 
-		public List<CourseInstanceDTO> GetCourseInstancesOnSemester(string semester)
-		{
-			// TODO:
-			return null;
-		}
+        public List<PersonDTO> GetCourseTeachers(int courseInstanceID)
+        {
+            var courseInstance = _courseInstances.All()
+                .SingleOrDefault(ci => ci.ID == courseInstanceID);
+            if (courseInstance == null)
+            {
+                throw new AppObjectNotFoundException("Course Instance not found!");
+            }
 
-		public List<CourseInstanceDTO> GetSemesterCourses(string semester)
-		{
-			// TODO
-			return null;
-		}
+            //var courseInstance = CourseExtensions.GetCourse(courseInstanceID, _courseInstances);
+
+            var result = (from t in _teacherRegistrations.All()
+                          join p in _persons.All() on t.SSN equals p.SSN
+                          where t.CourseInstanceID == courseInstanceID
+                          select p).ToList();
+
+            List<PersonDTO> teachers = new List<PersonDTO>();
+
+            foreach (Person p in result)
+            {
+                PersonDTO pDTO = new PersonDTO
+                {
+                    ID = p.ID,
+                    Name = p.Name,
+                    SSN = p.SSN
+                };
+                teachers.Add(pDTO);
+            }
+            return teachers;
+        }
+
+        public List<PersonDTO> GetCourseStudents(int courseInstanceID)
+        {
+            var courseInstance = _courseInstances.All()
+                .SingleOrDefault(ci => ci.ID == courseInstanceID);
+            if (courseInstance == null)
+            {
+                throw new AppObjectNotFoundException("Course Instance not found!");
+            }
+
+            var result = (from t in _studentRegistrations.All()
+                          join p in _persons.All() on t.SSN equals p.SSN
+                          where t.CourseInstanceID == courseInstanceID
+                          && t.Status == 1
+                          select p).ToList();
+
+            List<PersonDTO> students = new List<PersonDTO>();
+
+            foreach (Person p in result)
+            {
+                PersonDTO pDTO = new PersonDTO
+                {
+                    ID = p.ID,
+                    Name = p.Name,
+                    SSN = p.SSN
+                };
+                students.Add(pDTO);
+            }
+            return students;
+        }
+
+        public List<CourseInstanceDTO> GetCourseInstancesOnSemester(string semester)
+        {
+            // TODO:
+            return null;
+        }
+
+        public List<CourseInstanceDTO> GetSemesterCourses(string semester)
+        {
+            // TODO
+            return null;
+        }
 
         /// <summary>
         /// Add assignment to course
