@@ -158,6 +158,12 @@ namespace CoursesAPI
             
         }
 
+        /// <summary>
+        /// Add Assignment Tag to database
+        /// </summary>
+        /// <param name="courseInstanceID"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public AssTagDTO AddAssignmentTag(int courseInstanceID, AddAssignmentTagViewModel model)
         {
             //Business rule 0: Operations on a course must use a valid course ID.
@@ -191,6 +197,13 @@ namespace CoursesAPI
 
         }
 
+        /// <summary>
+        /// Teacher: Grade an assignment for a specific student
+        /// </summary>
+        /// <param name="courseInstanceID"></param>
+        /// <param name="assignmentID"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public AssGradeDTO AddGradeToAssignment(int courseInstanceID, int assignmentID, AddGradeViewModel model)
         {
 
@@ -231,6 +244,12 @@ namespace CoursesAPI
             };
         }
 
+        /// <summary>
+        /// Teacher: Get all grades for an assignment
+        /// </summary>
+        /// <param name="courseInstanceID"></param>
+        /// <param name="assignmentID"></param>
+        /// <returns></returns>
         public List<GradeListDTO> GetAllGradesOnAssignment(int courseInstanceID, int assignmentID)
         {
             //Business rule 0: Operations on a course must use a valid course ID.
@@ -241,7 +260,7 @@ namespace CoursesAPI
 
             var students = _studentRegistrations.All();
 
-            var grades = _assignmentGrades.All().Where(c => c.AssignmentID == assignmentID);
+           // var grades = _assignmentGrades.All().Where(c => c.AssignmentID == assignmentID);
       
             //magic
             List<GradeListDTO> assignmentGrades = 
@@ -255,20 +274,47 @@ namespace CoursesAPI
                           && t.Status == 1
                           select new GradeListDTO {
                             StudentName = p.Name,
+                            StudentRegistrationID = t.ID,
                             AssignmentName = x.Name,
                             AssignmentID = r.AssignmentID,
                             CourseInstanceID = x.CourseInstanceID,
                             Grade = r.Grade
-                          }).ToList();
+                          }
+                          ).ToList();
+
+            assignmentGrades.OrderBy(n => n.StudentName);
 
             return assignmentGrades;
         }
+        /// <summary>
+        /// Teacher: Get final grades of students in course
+        /// </summary>
+        /// <param name="courseInstanceID"></param>
+        /// <returns></returns>
+        public List<AssGradeDTO> GetFinalGradesForAllStudents(int courseInstanceID)
+        {
+            //Business rule 0: Operations on a course must use a valid course ID.
+            var course = _courseInstances.GetCourseInstanceByID(courseInstanceID);
+
+            return null;
+
+
+        }
+
+        
 
 
         /////////////////////////////////////////////////////////////////////////
         //////////////////Student functions//////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////
 
+        /// <summary>
+        /// Student: Get grade for a single assignment
+        /// </summary>
+        /// <param name="courseInstanceID"></param>
+        /// <param name="assignmentID"></param>
+        /// <param name="studentID"></param>
+        /// <returns></returns>
         public AssGradeDTO GetGradeFromAssignment(int courseInstanceID, int assignmentID, int studentID)
         {
 
@@ -281,13 +327,81 @@ namespace CoursesAPI
             //Business rule 3: Student must exist
             var student = _studentRegistrations.GetStudentRegistration(studentID);
 
+            var studentPerson = _persons.GetPerson(student.SSN);
+
             var grade = _assignmentGrades.All().SingleOrDefault(c => c.AssignmentID == assignmentID && c.StudentRegistrationID == studentID);
+
+            List<GradeListDTO> allGrades = GetAllGradesOnAssignment(courseInstanceID, assignmentID);
+
+            double place = allGrades.OrderByDescending(g => g.Grade).ToList().FindIndex(n => n.StudentRegistrationID == studentID) + 1;           
+
+            double average = allGrades.Sum(n => n.Grade) / allGrades.Count();
+           
 
             return new AssGradeDTO {
                 StudentRegistrationID = grade.StudentRegistrationID,
+                StudentName = studentPerson.Name,
+                AssignmentName = assignment.Name,
                 AssignmentID = grade.AssignmentID,
-                Grade = grade.Grade
+                Grade = grade.Grade,
+                NumberInClass = place,
+                Average = average
             };
+
+        }
+        /// <summary>
+        /// Student: Get grades for all assignments in specific course
+        /// </summary>
+        /// <param name="courseInstanceID"></param>
+        /// <param name="assignmentID"></param>
+        /// <param name="studentID"></param>
+        /// <returns></returns>
+        public List<GradeListDTO> GetAllSingleStudentGrades(int courseInstanceID,int studentID)
+        {
+
+             //Business rule 0: Operations on a course must use a valid course ID.
+            var course = _courseInstances.GetCourseInstanceByID(courseInstanceID);
+
+            //Business rule 1: Student must exist
+            var student = _studentRegistrations.GetStudentRegistration(studentID);
+
+            //magic
+            List<GradeListDTO> assignmentGrades =
+                 (
+                          from g in _assignmentGrades.All()
+                          join a in _assignments.All() on g.AssignmentID equals a.ID                       
+                          where a.CourseInstanceID == courseInstanceID    
+                          && g.StudentRegistrationID == studentID
+                          select new GradeListDTO
+                          {
+                              StudentRegistrationID = g.StudentRegistrationID,
+                              AssignmentName = a.Name,
+                              AssignmentID = a.ID,
+                              AssignmentTag = a.Tag,
+                              CourseInstanceID = courseInstanceID,
+                              Grade = g.Grade
+                          }
+                          ).ToList();
+            return assignmentGrades;
+        }    
+ 
+        public AssGradeDTO GetFinalGrade(int courseInstanceID, int studentID)
+        {
+
+            //Business rule 0: Operations on a course must use a valid course ID.
+            var course = _courseInstances.GetCourseInstanceByID(courseInstanceID);
+
+            //Business rule 1: Student must exist
+            var student = _studentRegistrations.GetStudentRegistration(studentID);
+
+            List<GradeListDTO> allStudentGrades = GetAllSingleStudentGrades(courseInstanceID, studentID);
+
+            List<String> tagList = new List<String>();
+
+           
+
+            return null;
+
 
         }
 

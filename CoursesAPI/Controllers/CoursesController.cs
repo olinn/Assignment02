@@ -136,6 +136,16 @@ namespace CoursesAPI.Controllers
             return Ok(result);
         }
 
+        [HttpGet]
+        [Route("{courseInstanceID:int}/student/{studentID:int}/getAllGrades")]
+        public IHttpActionResult GetAllGrades(int courseInstanceID, int studentID)
+        {
+            var result = _service.GetAllSingleStudentGrades(courseInstanceID, studentID);
+
+            return Ok(result);
+        }
+
+      
 
 
 	}
