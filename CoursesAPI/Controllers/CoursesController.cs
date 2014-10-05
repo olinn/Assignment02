@@ -34,6 +34,11 @@ namespace CoursesAPI.Controllers
 			return _service.GetSemesterCourses(semester);
 		}
 
+
+        /////////////////////////////////////////////////////////////////////////
+        //////////////////Teacher functions//////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////
+
         /// <summary>
         /// Add new assignment
         /// </summary>
@@ -100,8 +105,10 @@ namespace CoursesAPI.Controllers
         }
 
 
+        /////////////////////////////////////////////////////////////////////////
+        //////////////////Student functions//////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////
 
-        //Student functions
         /// <summary>
         /// Needs authentication to return 
         /// </summary>
@@ -114,7 +121,7 @@ namespace CoursesAPI.Controllers
         {
             var result = _service.GetGradeFromAssignment(courseInstanceID, assignmentID, studentID);
 
-            return null;
+            return Ok(result);
         }
 	}
 }
