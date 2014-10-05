@@ -22,41 +22,9 @@ namespace CoursesAPI.Tests.Services
             _uow = new MockUnitOfWork<MockDataContext>();
             _service = new CoursesServiceProvider(_uow);
 
-            var persons = new List<Person>
-		    {
-		        new Person
-		        {
-		            ID = 1,
-		            SSN = "2008814519",
-		            Name = "Marinó",
-		            Email = "marino12@ru.is"
-		        }
-
-		    };
-            _uow.SetRepositoryData(persons);
-
-            var courseInstances = new List<CourseInstance>
-            {
-                new CourseInstance
-                {
-                    ID = 1,
-                    CourseID = "T-514-VEFT",
-                    SemesterID = "20143"
-                }
-            };
-            _uow.SetRepositoryData(courseInstances);
-
-            var assTags = new List<AssTag>
-            {
-                new AssTag
-                {
-                    ID = 1,
-                    Name = "ass",
-                    NoToGrade = 5,
-                    CourseInstanceID = 1
-                }
-            };
-            _uow.SetRepositoryData(assTags);
+            _uow.SetRepositoryData(TestExtensions.GetPerson());
+            _uow.SetRepositoryData(TestExtensions.GetCourseInstance());
+            _uow.SetRepositoryData(TestExtensions.GetAssTag());
 
             AddAssignmentTagViewModel newAssTag = new AddAssignmentTagViewModel
             {
@@ -65,7 +33,7 @@ namespace CoursesAPI.Tests.Services
                 CourseInstanceID = 1
             };
 
-            _service.AddAssignmentTag(courseInstances[0].ID, newAssTag);
+            _service.AddAssignmentTag(1, newAssTag);
 
             AddAssignmentViewModel assVM = new AddAssignmentViewModel
             {
@@ -74,7 +42,7 @@ namespace CoursesAPI.Tests.Services
                 Percentage = 20.0,
                 Tag = "newAss"
             };
-            _service.AddAssignmentOnCourse(courseInstances[0].ID, assVM);
+            _service.AddAssignmentOnCourse(1, assVM);
 
 
         }

@@ -118,9 +118,11 @@
     <Compile Include="MockObjects\MockRepository.cs" />
     <Compile Include="MockObjects\MockUnitOfWork.cs" />
     <Compile Include="Services\CourseAssTests.cs" />
+    <Compile Include="Services\CourseGradeTests.cs" />
     <Compile Include="Services\CourseServicesTests.cs" />
     <Compile Include="Services\CourseStudentTests.cs" />
     <Compile Include="Services\CourseTeacherTests.cs" />
+    <Compile Include="Services\TestExtensions.cs" />
     <Compile Include="TestExtensions\ExpectedExceptionWithMessageAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -138,6 +140,7 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

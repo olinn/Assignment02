@@ -38,15 +38,12 @@ namespace CoursesAPI.Services.Extensions
 
         public static Assignment GetAssignmentByID(this IRepository<Assignment> repo, int id)
         {
-            try
+            var assignment = repo.All().SingleOrDefault(c => c.ID == id);
+            if (assignment == null)
             {
-                var assignment = repo.All().SingleOrDefault(c => c.ID == id);
-                return assignment;
+                throw new AppObjectNotFoundException("Assignment does not exist");
             }
-            catch(AppObjectNotFoundException e)
-            {
-               throw new AppObjectNotFoundException("Assignment does not exist");
-            }
+            return assignment;
             
         }
 

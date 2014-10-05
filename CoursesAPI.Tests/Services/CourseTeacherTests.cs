@@ -20,30 +20,8 @@ namespace CoursesAPI.Tests.Services
             _uow = new MockUnitOfWork<MockDataContext>();
             _service = new CoursesServiceProvider(_uow);
 
-            var persons = new List<Person>
-		    {
-		        new Person
-		        {
-		            ID = 1,
-		            SSN = "2008814519",
-		            Name = "Marinó",
-		            Email = "marino12@ru.is"
-		        }
-
-		    };
-            _uow.SetRepositoryData(persons);
-
-            var courseInstances = new List<CourseInstance>
-            {
-                new CourseInstance
-                {
-                    ID = 1,
-                    CourseID = "T-514-VEFT",
-                    SemesterID = "20143"
-                }
-            };
-            _uow.SetRepositoryData(courseInstances);
-
+            _uow.SetRepositoryData(TestExtensions.GetPerson());
+            _uow.SetRepositoryData(TestExtensions.GetCourseInstance());
 
         }
 
@@ -64,7 +42,7 @@ namespace CoursesAPI.Tests.Services
         }
 
         [TestMethod]
-        public void CheckTeachersInCourseWhen()
+        public void CheckTeachersInCourseWhenThereIsOne()
         {
             // Arrange:
             const int courseInstanceID = 1;
