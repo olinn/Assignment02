@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using CoursesAPI.Services.DataAccess;
+using CoursesAPI.Services.Exceptions;
 using CoursesAPI.Services.Models.Entities;
 
 namespace CoursesAPI.Services.Extensions
@@ -21,7 +22,7 @@ namespace CoursesAPI.Services.Extensions
             var course = repo.All().SingleOrDefault(c => c.ID == id);
 
             if (course == null)
-                throw new ArgumentException("Invalid course instance ID");
+                throw new AppObjectNotFoundException("Course Instance not found!");
 
             return course;
         }
@@ -37,16 +38,11 @@ namespace CoursesAPI.Services.Extensions
 
         public static AssTag GetAssignmentTag(this IRepository<AssTag> repo, string tag)
         {
-          
-          
-            var assignmentTag = repo.All().SingleOrDefault(c => c.AssignmentTag == tag);
+            var assignTag = repo.All().SingleOrDefault(c => c.AssignmentTag == tag);
 
-            if (assignmentTag == null)
-                return assignmentTag;
-            else
-                return assignmentTag;
+            return assignTag;
         }
-
+            
         
     }
 }

@@ -56,6 +56,7 @@
     <Compile Include="MockObjects\MockDataContext.cs" />
     <Compile Include="MockObjects\MockRepository.cs" />
     <Compile Include="MockObjects\MockUnitOfWork.cs" />
+    <Compile Include="Services\CourseAssTests.cs" />
     <Compile Include="Services\CourseServicesTests.cs" />
     <Compile Include="Services\CourseStudentTests.cs" />
     <Compile Include="Services\CourseTeacherTests.cs" />

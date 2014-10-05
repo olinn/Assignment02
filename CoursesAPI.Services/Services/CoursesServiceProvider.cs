@@ -32,19 +32,13 @@ namespace CoursesAPI
             _persons = _uow.GetRepository<Person>();
             _studentRegistrations = _uow.GetRepository<StudentRegistration>();
             _assignments = _uow.GetRepository<Assignment>();
+            _assignmentTags = _uow.GetRepository<AssTag>();
 
         }
 
         public List<PersonDTO> GetCourseTeachers(int courseInstanceID)
         {
-            var courseInstance = _courseInstances.All()
-                .SingleOrDefault(ci => ci.ID == courseInstanceID);
-            if (courseInstance == null)
-            {
-                throw new AppObjectNotFoundException("Course Instance not found!");
-            }
-
-            //var courseInstance = CourseExtensions.GetCourse(courseInstanceID, _courseInstances);
+            _courseInstances.GetCourseInstanceByID(courseInstanceID);
 
             var result = (from t in _teacherRegistrations.All()
                           join p in _persons.All() on t.SSN equals p.SSN
@@ -68,12 +62,7 @@ namespace CoursesAPI
 
         public List<PersonDTO> GetCourseStudents(int courseInstanceID)
         {
-            var courseInstance = _courseInstances.All()
-                .SingleOrDefault(ci => ci.ID == courseInstanceID);
-            if (courseInstance == null)
-            {
-                throw new AppObjectNotFoundException("Course Instance not found!");
-            }
+            _courseInstances.GetCourseInstanceByID(courseInstanceID);
 
             var result = (from t in _studentRegistrations.All()
                           join p in _persons.All() on t.SSN equals p.SSN
@@ -118,36 +107,38 @@ namespace CoursesAPI
         {
 
             //Business rule 0: Operations on a course must use a valid course ID.
-            var course = _courseInstances.GetCourseInstanceByID(courseInstanceID);
+            _courseInstances.GetCourseInstanceByID(courseInstanceID);
 
             //Business rule 1: Assignment name is unique, must not be already existing
             var assignment = _assignments.All().SingleOrDefault(c => c.Name == model.Name);
             if (assignment != null)
+            {
                 throw new ArgumentException("Assignment name already exists");
+            }
+                
 
             var assignmentTag = _assignmentTags.GetAssignmentTag(model.Tag);
+            
             if(model.Tag != null && assignmentTag == null)
             {
                 //Business rule 2: Tag must exist in AssignmentTag table
-                throw new ArgumentException("Assignment Tag does not exist, please create it before creating assignment!");
+                throw new AppObjectNotFoundException("Assignment Tag does not exist, please create it before creating assignment!");
             }
-            else
+
+            //Create new assignment and save
+            Assignment ass = new Assignment
             {
-                //Create new assignment and save
-                Assignment ass = new Assignment
-                {
-                    Name = model.Name,
-                    Description = model.Description,
-                    Percentage = model.Percentage,
-                    CourseInstanceID = courseInstanceID,
-                    Tag = model.Tag
-                };
+                Name = model.Name,
+                Description = model.Description,
+                Percentage = model.Percentage,
+                CourseInstanceID = courseInstanceID,
+                Tag = model.Tag
+            };
 
-                _assignments.Add(ass);
-                _uow.Save();
-            }
+            _assignments.Add(ass);
+            _uow.Save();
+           
 
-            //Return new AssignmentDTO
             return new AssignmentDTO
             {
                 Name = model.Name,
@@ -162,7 +153,7 @@ namespace CoursesAPI
         public AssTagDTO AddAssignmentTag(int courseInstanceID, AddAssignmentTagViewModel model)
         {
             //Business rule 0: Operations on a course must use a valid course ID.
-            var course = _courseInstances.GetCourseInstanceByID(courseInstanceID);
+            _courseInstances.GetCourseInstanceByID(courseInstanceID);
 
             //Business rule 1: Tag cannot already exist
             var assignmentTag = _assignmentTags.GetAssignmentTag(model.AssignmentTag);
@@ -172,17 +163,15 @@ namespace CoursesAPI
                 //Business rule 2: Tag must exist in AssignmentTag table
                 throw new ArgumentException("Assignment Tag already  exist!");
             }
-            else
-            {
-                AssTag assT = new AssTag
-                {
-                    AssignmentTag = model.AssignmentTag,
-                    NoToGrade = model.NumberOfAssignments
-                };
-                _assignmentTags.Add(assT);
-                _uow.Save();
 
-            }
+            AssTag assT = new AssTag
+            {
+                AssignmentTag = model.AssignmentTag,
+                NoToGrade = model.NumberOfAssignments
+            };
+            _assignmentTags.Add(assT);
+            _uow.Save();
+
 
             return new AssTagDTO
             {
