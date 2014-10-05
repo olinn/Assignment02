@@ -10,5 +10,7 @@ namespace CoursesAPI.Models
         public int NoToGrade { get; set; }
 
         public int CourseInstanceID { get; set; }
+
+
     }
 }

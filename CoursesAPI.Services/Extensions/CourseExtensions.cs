@@ -72,6 +72,16 @@ namespace CoursesAPI.Services.Extensions
             return student;
         }
 
+        public static Person GetPerson(this IRepository<Person> repo, string ssn)
+        {
+            var person = repo.All().SingleOrDefault(p => p.SSN == ssn);
+
+            if (person == null)
+                throw new AppObjectNotFoundException("No person with that SSN exists.");
+
+            return person;
+        }
+
             
         
     }

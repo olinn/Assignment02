@@ -13,7 +13,10 @@ namespace CoursesAPI.Models
         /// Student name
         /// </summary>
         public string StudentName { get; set; }
-
+        /// <summary>
+        /// Student's registration ID.
+        /// </summary>
+        public int StudentRegistrationID { get; set; }
         /// <summary>
         /// AssignmentID
         /// </summary>
@@ -32,5 +35,7 @@ namespace CoursesAPI.Models
         /// Student grade
         /// </summary>
         public double Grade { get; set; }
+
+        public string AssignmentTag { get; set; }
     }
 }
