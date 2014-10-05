@@ -14,7 +14,9 @@ namespace CoursesAPI.Services.Models.Entities
         /// <summary>
         /// Assignment references the CourseInstance which binds semester and course together
         /// </summary>
-        public int NoToGrade { get; set; }     
+        public int NoToGrade { get; set; }
+
+        public int CourseInstanceID { get; set; }
 
    
     }

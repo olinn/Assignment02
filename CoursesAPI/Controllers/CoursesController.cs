@@ -31,19 +31,87 @@ namespace CoursesAPI.Controllers
 			return _service.GetSemesterCourses(semester);
 		}
 
+        /// <summary>
+        /// Add new assignment
+        /// </summary>
+        /// <param name="courseInstanceID"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("{courseInstanceID:int}/addAssignment/")]
-        public  HttpResponseMessage AddAssignmentOnCourse(int courseInstanceID, AddAssignmentViewModel model)
+        public  IHttpActionResult AddAssignmentOnCourse(int courseInstanceID, AddAssignmentViewModel model)
         {
-
-            return Request.CreateResponse(HttpStatusCode.Created, _service.AddAssignmentOnCourse(courseInstanceID, model));
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            else
+            {
+                var result = _service.AddAssignmentOnCourse(courseInstanceID, model);
+                return Created("Assignment succesfully created", result);
+            }
+                
         }
 
+        /// <summary>
+        /// Add new Assignment TAG
+        /// </summary>
+        /// <param name="courseInstanceID"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("{courseInstanceID:int}/addTag")]
-        public HttpResponseMessage AddAssignmentTag(int courseInstanceID, AddAssignmentTagViewModel model)
+        public IHttpActionResult AddAssignmentTag(int courseInstanceID, AddAssignmentTagViewModel model)
         {
-            return Request.CreateResponse(HttpStatusCode.Created, _service.AddAssignmentTag(courseInstanceID, model));
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            else
+            {
+                var result = _service.AddAssignmentTag(courseInstanceID, model);
+                return Created("Tag succesfully added", result);
+            }
+        }
+
+        /// <summary>
+        /// Grade a specific Assignment
+        /// </summary>
+        /// <param name="courseInstanceID"></param>
+        /// <param name="assignmentID"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("{courseInstanceID:int}/assignment/{assignmentID:int}/addGrade")]
+        public IHttpActionResult AddGrade(int courseInstanceID, int assignmentID, AddGradeViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            else
+            {
+                var result = _service.AddGradeToAssignment(courseInstanceID, assignmentID, model);
+                return Created("Grade added", result);
+            }            
+        }
+
+
+
+        //Student functions
+        /// <summary>
+        /// Needs authentication to return 
+        /// </summary>
+        /// <param name="courseInstanceID"></param>
+        /// <param name="assignmentID"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{courseInstanceID:int}/student/{studentID:int}/assignment/{assignmentID:int}/getGrade")]
+        public IHttpActionResult GetGrade(int courseInstanceID, int assignmentID, int studentID)
+        {
+            var result = _service.GetGradeFromAssignment(courseInstanceID, assignmentID, studentID);
+
+            return null;
         }
 	}
 }

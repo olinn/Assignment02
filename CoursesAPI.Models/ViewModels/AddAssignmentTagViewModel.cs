@@ -15,5 +15,8 @@ namespace CoursesAPI.Models
         /// </summary>
         [Required]
         public int NumberOfAssignments { get; set; }
+
+        [Required]
+        public int CourseInstanceID { get; set; }
     }
 }

@@ -21,6 +21,7 @@ namespace CoursesAPI
         private readonly IRepository<Assignment> _assignments;
         private readonly IRepository<AssTag> _assignmentTags;
         private readonly IRepository<StudentRegistration> _studentRegistrations;
+        private readonly IRepository<AssGrade> _assignmentGrades;
 
         public CoursesServiceProvider(IUnitOfWork uow)
         {
@@ -33,6 +34,7 @@ namespace CoursesAPI
             _studentRegistrations = _uow.GetRepository<StudentRegistration>();
             _assignments = _uow.GetRepository<Assignment>();
             _assignmentTags = _uow.GetRepository<AssTag>();
+            _assignmentGrades = _uow.GetRepository<AssGrade>();
 
         }
 
@@ -113,7 +115,7 @@ namespace CoursesAPI
             var assignment = _assignments.All().SingleOrDefault(c => c.Name == model.Name);
             if (assignment != null)
             {
-                throw new ArgumentException("Assignment name already exists");
+                throw new AppObjectNotFoundException("Assignment name already exists");
             }
                 
 
@@ -161,13 +163,14 @@ namespace CoursesAPI
             if (assignmentTag != null)
             {
                 //Business rule 2: Tag must exist in AssignmentTag table
-                throw new ArgumentException("Assignment Tag already  exist!");
+                throw new AppObjectNotFoundException("Assignment Tag already  exist!");
             }
 
             AssTag assT = new AssTag
             {
                 AssignmentTag = model.AssignmentTag,
-                NoToGrade = model.NumberOfAssignments
+                NoToGrade = model.NumberOfAssignments,
+                CourseInstanceID = courseInstanceID
             };
             _assignmentTags.Add(assT);
             _uow.Save();
@@ -176,12 +179,76 @@ namespace CoursesAPI
             return new AssTagDTO
             {
                 AssignmentTag = model.AssignmentTag,
-                NoToGrade = model.NumberOfAssignments
+                NoToGrade = model.NumberOfAssignments,
+                CourseInstanceID = courseInstanceID
             };           
 
         }
 
-      
+        public AssGradeDTO AddGradeToAssignment(int courseInstanceID, int assignmentID, AddGradeViewModel model)
+        {
+
+            //Business rule 0: Operations on a course must use a valid course ID.
+            var course = _courseInstances.GetCourseInstanceByID(courseInstanceID);            
+
+            if(assignmentID != model.AssignmentID)
+                throw new AppObjectNotFoundException("AssignmentID mismatch in path and model.");
+
+            //Business rule 1: Assignment must exist
+            var assignment = _assignments.GetAssignmentByID(assignmentID);
+
+            //CourseInstanceID in path must be the same as in the assignment being graded
+            if (courseInstanceID != assignment.CourseInstanceID)
+                throw new AppObjectNotFoundException("CourseInstanceID does not match assignment CourseInstanceID");
+
+            //Business rule 3: Student must exist
+            var student = _studentRegistrations.GetStudentRegistration(model.StudentRegistrationID);
+
+            if(assignment != null && student != null)
+            {
+                var assG = new AssGrade
+                {
+                    StudentRegistrationID = model.StudentRegistrationID,
+                    AssignmentID = model.AssignmentID,
+                    Grade = model.Grade
+                };
+
+                _assignmentGrades.Add(assG);
+                _uow.Save();                
+            }
+
+            return new AssGradeDTO
+            {
+                StudentRegistrationID = model.StudentRegistrationID,
+                AssignmentID = model.AssignmentID,
+                Grade = model.Grade
+            };
+        }
+     
+
+        //Student functions
+
+        public AssGradeDTO GetGradeFromAssignment(int courseInstanceID, int assignmentID, int studentID)
+        {
+
+            //Business rule 0: Operations on a course must use a valid course ID.
+            var course = _courseInstances.GetCourseInstanceByID(courseInstanceID);
+
+            //Business rule 1: Assignment must exist
+            var assignment = _assignments.GetAssignmentByID(assignmentID);
+
+            //Business rule 3: Student must exist
+            var student = _studentRegistrations.GetStudentRegistration(studentID);
+
+            var grade = _assignmentGrades.All().SingleOrDefault(c => c.AssignmentID == assignmentID && c.StudentRegistrationID == studentID);
+
+            return new AssGradeDTO {
+                StudentRegistrationID = grade.StudentRegistrationID,
+                AssignmentID = grade.AssignmentID,
+                Grade = grade.Grade
+            };
+
+        }
 
       
 	}
