@@ -8,15 +8,16 @@ namespace CoursesAPI.Models
         /// Identification tag for groups
         /// </summary>
         [Required]
-        public string AssignmentTag { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// Number of assignments to use
         /// </summary>
         [Required]
-        public int NumberOfAssignments { get; set; }
+        public int NoToGrade { get; set; }
 
         [Required]
         public int CourseInstanceID { get; set; }
+
     }
 }

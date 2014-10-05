@@ -50,16 +50,19 @@ namespace CoursesAPI.Tests.Services
             {
                 new AssTag
                 {
-                    AssignmentTag = "ass",
-                    NoToGrade = 5
+                    ID = 1,
+                    Name = "ass",
+                    NoToGrade = 5,
+                    CourseInstanceID = 1
                 }
             };
             _uow.SetRepositoryData(assTags);
 
             AddAssignmentTagViewModel newAssTag = new AddAssignmentTagViewModel
             {
-                AssignmentTag = "newAss",
-                NumberOfAssignments = 5
+                Name = "newAss",
+                NoToGrade = 5,
+                CourseInstanceID = 1
             };
 
             _service.AddAssignmentTag(courseInstances[0].ID, newAssTag);
@@ -86,13 +89,14 @@ namespace CoursesAPI.Tests.Services
 
             AddAssignmentTagViewModel assTagModel = new AddAssignmentTagViewModel
             {
-                AssignmentTag = "ass",
-                NumberOfAssignments = 5
+                Name = "ass",
+                NoToGrade = 5,
+                CourseInstanceID = 1
             };
 
             AssTagDTO assTDTO = _service.AddAssignmentTag(courseInstanceID, assTagModel);
 
-            Assert.AreEqual(assTagModel.AssignmentTag, assTDTO.AssignmentTag);
+            Assert.AreEqual(assTagModel.Name, assTDTO.Name);
         }
 
         [TestMethod]
@@ -133,7 +137,7 @@ namespace CoursesAPI.Tests.Services
         }
 
         [TestMethod]
-        [ExpectedExceptionWithMessage(typeof (ArgumentException),
+        [ExpectedExceptionWithMessage(typeof(AppObjectNotFoundException),
             "Assignment name already exists")]
         public void CheckAddingAssignmentWithExistingName()
         {

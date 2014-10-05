@@ -99,6 +99,10 @@ namespace CoursesAPI
             return null;
         }
 
+        /////////////////////////////////////////////////////////////////////////
+        //////////////////Teacher functions//////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////
+
         /// <summary>
         /// Add assignment to course
         /// </summary>
@@ -134,7 +138,8 @@ namespace CoursesAPI
                 Description = model.Description,
                 Percentage = model.Percentage,
                 CourseInstanceID = courseInstanceID,
-                Tag = model.Tag
+                Tag = model.Tag,
+                Required = model.Required
             };
 
             _assignments.Add(ass);
@@ -147,7 +152,8 @@ namespace CoursesAPI
                 Description = model.Description,
                 Percentage = model.Percentage,
                 CourseInstanceID = courseInstanceID,
-                Tag = model.Tag 
+                Tag = model.Tag ,
+                Required = model.Required
             }; 
             
         }
@@ -158,18 +164,18 @@ namespace CoursesAPI
             _courseInstances.GetCourseInstanceByID(courseInstanceID);
 
             //Business rule 1: Tag cannot already exist
-            var assignmentTag = _assignmentTags.GetAssignmentTag(model.AssignmentTag);
-
+            var assignmentTag = _assignmentTags.GetAssignmentTag(model.Name);
             if (assignmentTag != null)
             {
                 //Business rule 2: Tag must exist in AssignmentTag table
                 throw new AppObjectNotFoundException("Assignment Tag already  exist!");
             }
 
+         
             AssTag assT = new AssTag
             {
-                AssignmentTag = model.AssignmentTag,
-                NoToGrade = model.NumberOfAssignments,
+                Name = model.Name,
+                NoToGrade = model.NoToGrade,
                 CourseInstanceID = courseInstanceID
             };
             _assignmentTags.Add(assT);
@@ -178,8 +184,8 @@ namespace CoursesAPI
 
             return new AssTagDTO
             {
-                AssignmentTag = model.AssignmentTag,
-                NoToGrade = model.NumberOfAssignments,
+                Name = model.Name,
+                NoToGrade = model.NoToGrade,
                 CourseInstanceID = courseInstanceID
             };           
 
@@ -224,9 +230,44 @@ namespace CoursesAPI
                 Grade = model.Grade
             };
         }
-     
 
-        //Student functions
+        public List<GradeListDTO> GetAllGradesOnAssignment(int courseInstanceID, int assignmentID)
+        {
+            //Business rule 0: Operations on a course must use a valid course ID.
+            var course = _courseInstances.GetCourseInstanceByID(courseInstanceID);
+
+            //Business rule 1: Assignment must exist
+            var assignment = _assignments.GetAssignmentByID(assignmentID);
+
+            var students = _studentRegistrations.All();
+
+            var grades = _assignmentGrades.All().Where(c => c.AssignmentID == assignmentID);
+      
+            //magic
+            List<GradeListDTO> assignmentGrades = 
+                 (
+                          from t in _studentRegistrations.All()
+                          join p in _persons.All() on t.SSN equals p.SSN
+                          join r in _assignmentGrades.All() on t.ID equals r.StudentRegistrationID
+                          join x in _assignments.All() on r.AssignmentID equals x.ID
+                          where t.CourseInstanceID == courseInstanceID
+                          && r.AssignmentID == assignmentID
+                          && t.Status == 1
+                          select new GradeListDTO {
+                            StudentName = p.Name,
+                            AssignmentName = x.Name,
+                            AssignmentID = r.AssignmentID,
+                            CourseInstanceID = x.CourseInstanceID,
+                            Grade = r.Grade
+                          }).ToList();
+
+            return assignmentGrades;
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////
+        //////////////////Student functions//////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////
 
         public AssGradeDTO GetGradeFromAssignment(int courseInstanceID, int assignmentID, int studentID)
         {

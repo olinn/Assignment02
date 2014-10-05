@@ -12,5 +12,7 @@
         public string Tag { get; set; }
 
         public double Percentage { get; set; }
+
+        public bool Required { get; set; }
     }
 }

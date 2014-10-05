@@ -7,5 +7,7 @@
         public string SSN { get; set; }
 
         public int CourseInstanceID { get; set; }
+
+        public int Status { get; set; }
     }
 }

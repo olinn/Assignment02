@@ -32,8 +32,13 @@ namespace CoursesAPI.Controllers
 			return _service.GetSemesterCourses(semester);
 		}
 
+
+        /////////////////////////////////////////////////////////////////////////
+        //////////////////Teacher functions//////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////
+
         /// <summary>
-        /// Add new assignment
+        /// Teacher: Add new assignment
         /// </summary>
         /// <param name="courseInstanceID"></param>
         /// <param name="model"></param>
@@ -42,7 +47,7 @@ namespace CoursesAPI.Controllers
         [Route("{courseInstanceID:int}/addAssignment/")]
         public  IHttpActionResult AddAssignmentOnCourse(int courseInstanceID, AddAssignmentViewModel model)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid || model == null)
             {
                 return BadRequest(ModelState);
             }
@@ -55,7 +60,7 @@ namespace CoursesAPI.Controllers
         }
 
         /// <summary>
-        /// Add new Assignment TAG
+        /// Teacher: Add new Assignment TAG
         /// </summary>
         /// <param name="courseInstanceID"></param>
         /// <param name="model"></param>
@@ -64,7 +69,7 @@ namespace CoursesAPI.Controllers
         [Route("{courseInstanceID:int}/addTag")]
         public IHttpActionResult AddAssignmentTag(int courseInstanceID, AddAssignmentTagViewModel model)
         {
-            if(!ModelState.IsValid)
+            if(!ModelState.IsValid || model == null)
             {
                 return BadRequest(ModelState);
             }
@@ -76,7 +81,7 @@ namespace CoursesAPI.Controllers
         }
 
         /// <summary>
-        /// Grade a specific Assignment
+        /// Teacher: Grade a specific Assignment
         /// </summary>
         /// <param name="courseInstanceID"></param>
         /// <param name="assignmentID"></param>
@@ -86,20 +91,36 @@ namespace CoursesAPI.Controllers
         [Route("{courseInstanceID:int}/assignment/{assignmentID:int}/addGrade")]
         public IHttpActionResult AddGrade(int courseInstanceID, int assignmentID, AddGradeViewModel model)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || model == null)
             {
                 return BadRequest(ModelState);
             }
             else
             {
-                var result = _service.AddGradeToAssignment(courseInstanceID, assignmentID, model);
-                return Created("Grade added", result);
+                return Created("Grade added", _service.AddGradeToAssignment(courseInstanceID, assignmentID, model));
             }            
+        }
+        /// <summary>
+        /// Teacher: Get all grades for a specific assignment
+        /// </summary>
+        /// <param name="courseInstanceID"></param>
+        /// <param name="assignmentID"></param>
+        /// <param name="studentID"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{courseInstanceID:int}/assignment/{assignmentID:int}/getGrades")]
+        public IHttpActionResult GetGrades(int courseInstanceID, int assignmentID)
+        {
+
+            return Ok(_service.GetAllGradesOnAssignment(courseInstanceID, assignmentID));
+
         }
 
 
+        /////////////////////////////////////////////////////////////////////////
+        //////////////////Student functions//////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////
 
-        //Student functions
         /// <summary>
         /// Needs authentication to return 
         /// </summary>
@@ -112,7 +133,10 @@ namespace CoursesAPI.Controllers
         {
             var result = _service.GetGradeFromAssignment(courseInstanceID, assignmentID, studentID);
 
-            return null;
+            return Ok(result);
         }
+
+
+
 	}
 }

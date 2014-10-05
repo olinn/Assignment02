@@ -38,19 +38,31 @@ namespace CoursesAPI.Services.Extensions
 
         public static Assignment GetAssignmentByID(this IRepository<Assignment> repo, int id)
         {
-            var assignment = repo.All().SingleOrDefault(c => c.ID == id);
-
-            if (assignment == null)
-                throw new AppObjectNotFoundException("Assignment does not exist");
-
-            return assignment;
+            try
+            {
+                var assignment = repo.All().SingleOrDefault(c => c.ID == id);
+                return assignment;
+            }
+            catch(AppObjectNotFoundException e)
+            {
+               throw new AppObjectNotFoundException("Assignment does not exist");
+            }
+            
         }
 
         public static AssTag GetAssignmentTag(this IRepository<AssTag> repo, string tag)
         {
-            var assignTag = repo.All().SingleOrDefault(c => c.AssignmentTag == tag);
-
-            return assignTag;
+            try
+            {
+                var assignTag = repo.All().SingleOrDefault(c => c.Name == tag);
+                return assignTag;
+            }
+            catch
+            {            
+               
+            }
+            return null;
+            
         }
 
         public static StudentRegistration GetStudentRegistration(this IRepository<StudentRegistration> repo, int studentID)

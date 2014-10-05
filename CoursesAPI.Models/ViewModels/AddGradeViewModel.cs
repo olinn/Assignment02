@@ -18,6 +18,6 @@ namespace CoursesAPI.Models
         /// <summary>
         /// Student's grade for assignment
         /// </summary>
-        public float Grade { get; set; }
+        public double Grade { get; set; }
     }
 }
