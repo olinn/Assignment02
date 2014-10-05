@@ -10,6 +10,7 @@ using CoursesAPI.Services;
 namespace CoursesAPI.Controllers
 {
 	[RoutePrefix("api/courses")]
+    [Authorize]
 	public class CoursesController : ApiController
 	{
 		private readonly CoursesServiceProvider _service;
@@ -19,7 +20,9 @@ namespace CoursesAPI.Controllers
 			_service = new CoursesServiceProvider(new UnitOfWork<AppDataContext>());
 		}
 
+
 		[Route("{courseInstanceID:int}/teachers")]
+        [Authorize(Roles = "teacher")]
 		public List<PersonDTO> GetCourseTeachers(int courseInstanceID)
 		{
 			return _service.GetCourseTeachers(courseInstanceID);

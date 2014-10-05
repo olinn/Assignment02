@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens;
 using System.Linq;
 using System.Web;
-using Microsoft.Owin;
+
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Owin;
+using System.IdentityModel.Tokens;
 using Microsoft.Owin.Security.OpenIdConnect;
 using System.Security.Claims;
-using Thinktecture.IdentityModel;
-using Thinktecture.IdentityModel.Owin.ScopeValidation;
-using Thinktecture.IdentityModel.Tokens;
-using Thinktecture.IdentityServer.v3.AccessTokenValidation;
+//using Thinktecture.IdentityModel.Tokens;
 
 
-[assembly: OwinStartup(typeof(IdentityApplication.Startup))]
 namespace IdentityApplication
 {
     public static class Constants

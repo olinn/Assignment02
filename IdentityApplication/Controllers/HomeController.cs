@@ -56,6 +56,7 @@ namespace IdentityApplication.Controllers
             {
                 //BaseAddress = new Uri("http://localhost:2727/")
                 BaseAddress = new Uri("http://localhost:64212/")
+                //BaseAddress = new Uri("http://localhost:12298/")
             };
 
             ClaimsPrincipal id = System.Security.Claims.ClaimsPrincipal.Current;
