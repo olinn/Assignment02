@@ -32,8 +32,18 @@ namespace CoursesAPI.Services.Extensions
             var assignment = repo.All().SingleOrDefault(c => c.Name == name);
 
             if (assignment != null)
-                throw new ArgumentException("Assignment name already exists");
+                throw new AppObjectNotFoundException("Assignment name already exists");
             return null;
+        }
+
+        public static Assignment GetAssignmentByID(this IRepository<Assignment> repo, int id)
+        {
+            var assignment = repo.All().SingleOrDefault(c => c.ID == id);
+
+            if (assignment == null)
+                throw new AppObjectNotFoundException("Assignment does not exist");
+
+            return assignment;
         }
 
         public static AssTag GetAssignmentTag(this IRepository<AssTag> repo, string tag)
@@ -42,6 +52,17 @@ namespace CoursesAPI.Services.Extensions
 
             return assignTag;
         }
+
+        public static StudentRegistration GetStudentRegistration(this IRepository<StudentRegistration> repo, int studentID)
+        {
+            var student = repo.All().SingleOrDefault(c => c.ID == studentID);
+
+            if (student == null)
+                throw new AppObjectNotFoundException("Student is not registered");
+
+            return student;
+        }
+
             
         
     }
