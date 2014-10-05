@@ -3,13 +3,13 @@ namespace CoursesAPI.Services.Models.Entities
 {
     public class AssTag
     {
-   
 
+        public int ID { get; set; }
         /// <summary>
         /// Name of the tag
         /// </summary>
-        [Key]
-        public string AssignmentTag { get; set; }
+
+        public string Name { get; set; }
 
         /// <summary>
         /// Assignment references the CourseInstance which binds semester and course together

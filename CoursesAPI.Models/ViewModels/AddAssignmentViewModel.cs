@@ -26,5 +26,7 @@ namespace CoursesAPI.Models
         /// Assignment TAG, to group assignments together if needed.
         /// </summary>
         public string Tag { get; set; }
+
+        public bool Required { get; set; }
     }
 }

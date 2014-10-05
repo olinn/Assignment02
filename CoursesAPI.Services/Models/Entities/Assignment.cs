@@ -33,5 +33,10 @@ namespace CoursesAPI.Services.Models.Entities
         /// Percentage value of assignment regarding total grade for course
         /// </summary>
         public double Percentage { get; set; }
+
+        /// <summary>
+        /// Is required
+        /// </summary>
+        public bool Required { get; set; }
     }
 }

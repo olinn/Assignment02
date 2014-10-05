@@ -16,5 +16,9 @@ namespace CoursesAPI.Models.ViewModels
         [Required]
         public int CourseInstanceID { get; set; }
 
+        /// <summary>
+        /// Student status
+        /// </summary>
+        public int Status { get; set; }
     }
 }
