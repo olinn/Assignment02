@@ -19,17 +19,25 @@ namespace CoursesAPI.Controllers
 			_service = new CoursesServiceProvider(new UnitOfWork<AppDataContext>());
 		}
 
-
+        /// <summary>
+        /// Returns teachers on a course instance
+        /// </summary>
+        /// <param name="courseInstanceID"></param>
+        /// <returns></returns>
 		[Route("{courseInstanceID:int}/teachers")]
 		public List<PersonDTO> GetCourseTeachers(int courseInstanceID)
 		{
 			return _service.GetCourseTeachers(courseInstanceID);
 		}
-		
+		/// <summary>
+		/// Returns courses on a semester
+		/// </summary>
+		/// <param name="semester"></param>
+		/// <returns></returns>
 		[Route("semester/{semester}")]
 		public List<CourseInstanceDTO> GetCoursesOnSemester(string semester)
 		{
-			return _service.GetSemesterCourses(semester);
+			return _service.GetCourseInstancesOnSemester(semester);
 		}
 
 
@@ -44,7 +52,7 @@ namespace CoursesAPI.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("{courseInstanceID:int}/addAssignment/")]
+        [Route("{courseInstanceID:int}/assignment/")]
         public  IHttpActionResult AddAssignmentOnCourse(int courseInstanceID, AddAssignmentViewModel model)
         {
             if (!ModelState.IsValid || model == null)
@@ -66,7 +74,7 @@ namespace CoursesAPI.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("{courseInstanceID:int}/addTag")]
+        [Route("{courseInstanceID:int}/tag")]
         public IHttpActionResult AddAssignmentTag(int courseInstanceID, AddAssignmentTagViewModel model)
         {
             if(!ModelState.IsValid || model == null)
@@ -88,7 +96,7 @@ namespace CoursesAPI.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("{courseInstanceID:int}/assignment/{assignmentID:int}/addGrade")]
+        [Route("{courseInstanceID:int}/assignment/{assignmentID:int}/")]
         public IHttpActionResult AddGrade(int courseInstanceID, int assignmentID, AddGradeViewModel model)
         {
             if (!ModelState.IsValid || model == null)
@@ -108,12 +116,24 @@ namespace CoursesAPI.Controllers
         /// <param name="studentID"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("{courseInstanceID:int}/assignment/{assignmentID:int}/getGrades")]
-        public IHttpActionResult GetGrades(int courseInstanceID, int assignmentID)
+        [Route("{courseInstanceID:int}/assignment/{assignmentID:int}/grades")]
+        public IHttpActionResult GetAllGradesOnAssignment(int courseInstanceID, int assignmentID)
         {
 
             return Ok(_service.GetAllGradesOnAssignment(courseInstanceID, assignmentID));
 
+        }
+
+        /// <summary>
+        /// Returns final grades for all students in a specific course
+        /// </summary>
+        /// <param name="courseInstanceID"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{courseInstanceID:int}/grades")]
+        public IHttpActionResult GetFinalGrades(int courseInstanceID)
+        {
+            return Ok(_service.GetFinalGradesForAllStudents(courseInstanceID));
         }
 
 
@@ -122,34 +142,45 @@ namespace CoursesAPI.Controllers
         /////////////////////////////////////////////////////////////////////////
 
         /// <summary>
-        /// Needs authentication to return 
+        /// Get grade for single assignment for single student in a specific course
         /// </summary>
         /// <param name="courseInstanceID"></param>
+        /// /// <param name="assignmentID"></param>
         /// <param name="assignmentID"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("{courseInstanceID:int}/student/{studentID:int}/assignment/{assignmentID:int}/getGrade")]
+        [Route("{courseInstanceID:int}/student/{studentID:int}/assignment/{assignmentID:int}/grade")]
         public IHttpActionResult GetGrade(int courseInstanceID, int assignmentID, int studentID)
         {
             var result = _service.GetGradeFromAssignment(courseInstanceID, assignmentID, studentID);
 
             return Ok(result);
         }
-
+        /// <summary>
+        /// Returns all grades for specific student in a specific course
+        /// </summary>
+        /// <param name="courseInstanceID"></param>
+        /// <param name="studentID"></param>
+        /// <returns></returns>
         [HttpGet]
-        [Route("{courseInstanceID:int}/student/{studentID:int}/getAllGrades")]
+        [Route("{courseInstanceID:int}/student/{studentID:int}/grades")]
         public IHttpActionResult GetAllGrades(int courseInstanceID, int studentID)
         {
             var result = _service.GetAllSingleStudentGrades(courseInstanceID, studentID);
 
             return Ok(result);
         }
-
+        /// <summary>
+        /// Returns final grade for specific student in a specific course
+        /// </summary>
+        /// <param name="courseInstanceID"></param>
+        /// <param name="studentID"></param>
+        /// <returns></returns>
         [HttpGet]
-        [Route("{courseInstanceID:int}/student/{studentID:int}/getFinalGrades")]
+        [Route("{courseInstanceID:int}/student/{studentID:int}/finalgrade")]
         public IHttpActionResult GetFinalGrades(int courseInstanceID, int studentID)
         {
-            var result = _service.GetFinalGrade(courseInstanceID, studentID);
+            var result = _service.GetFinalGradeForSingleStudent(courseInstanceID, studentID);
 
             return Ok(result);
         }

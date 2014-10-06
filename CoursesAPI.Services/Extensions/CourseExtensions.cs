@@ -8,6 +8,10 @@ using CoursesAPI.Services.Models.Entities;
 
 namespace CoursesAPI.Services.Extensions
 {
+    /// <summary>
+    /// Functions used more than once in CourseServiceProvider
+    /// Created here to fulfill DRY.
+    /// </summary>
     public static class CourseExtensions
     {
         /// <summary>
@@ -26,7 +30,12 @@ namespace CoursesAPI.Services.Extensions
 
             return course;
         }
-
+        /// <summary>
+        /// Get assignment by name
+        /// </summary>
+        /// <param name="repo"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public static Assignment GetAssignmentByName(this IRepository<Assignment> repo, string name)
         {
             var assignment = repo.All().SingleOrDefault(c => c.Name == name);
@@ -35,7 +44,12 @@ namespace CoursesAPI.Services.Extensions
                 throw new AppObjectNotFoundException("Assignment name already exists");
             return null;
         }
-
+        /// <summary>
+        /// Get assignment by id
+        /// </summary>
+        /// <param name="repo"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public static Assignment GetAssignmentByID(this IRepository<Assignment> repo, int id)
         {
             var assignment = repo.All().SingleOrDefault(c => c.ID == id);
@@ -46,7 +60,12 @@ namespace CoursesAPI.Services.Extensions
             return assignment;
             
         }
-
+        /// <summary>
+        /// Get assignment tag by tag
+        /// </summary>
+        /// <param name="repo"></param>
+        /// <param name="tag"></param>
+        /// <returns></returns>
         public static AssTag GetAssignmentTag(this IRepository<AssTag> repo, string tag)
         {
             try
@@ -61,7 +80,12 @@ namespace CoursesAPI.Services.Extensions
             return null;
             
         }
-
+        /// <summary>
+        /// Get student registration info
+        /// </summary>
+        /// <param name="repo"></param>
+        /// <param name="studentID"></param>
+        /// <returns></returns>
         public static StudentRegistration GetStudentRegistration(this IRepository<StudentRegistration> repo, int studentID)
         {
             var student = repo.All().SingleOrDefault(c => c.ID == studentID);
@@ -71,7 +95,12 @@ namespace CoursesAPI.Services.Extensions
 
             return student;
         }
-
+        /// <summary>
+        /// Get person info
+        /// </summary>
+        /// <param name="repo"></param>
+        /// <param name="ssn"></param>
+        /// <returns></returns>
         public static Person GetPerson(this IRepository<Person> repo, string ssn)
         {
             var person = repo.All().SingleOrDefault(p => p.SSN == ssn);
@@ -81,12 +110,27 @@ namespace CoursesAPI.Services.Extensions
 
             return person;
         }
-
+        /// <summary>
+        /// Get a list of assignment tags
+        /// </summary>
+        /// <param name="repo"></param>
+        /// <param name="courseInstanceID"></param>
+        /// <returns></returns>
         public static List<AssTag> GetAssignmentTags(this IRepository<AssTag> repo, int courseInstanceID)
         {
             List<AssTag> allTags = repo.All().Where(t => t.CourseInstanceID == courseInstanceID).ToList();
 
             return allTags;
+        }
+        /// <summary>
+        /// Get a course template for a specific course
+        /// </summary>
+        /// <param name="repo"></param>
+        /// <param name="courseID"></param>
+        /// <returns></returns>
+        public static CourseTemplate GetCourse(this IRepository<CourseTemplate> repo, string courseID)
+        {
+            return repo.All().Where(c => c.CourseID == courseID).SingleOrDefault();
         }
 
             

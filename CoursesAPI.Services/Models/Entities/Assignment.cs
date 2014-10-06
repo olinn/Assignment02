@@ -1,6 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 namespace CoursesAPI.Services.Models.Entities
 {
+    /// <summary>
+    /// Entity class for Assignment
+    /// </summary>
     public class Assignment
     {
         /// <summary>

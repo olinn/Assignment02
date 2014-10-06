@@ -37,7 +37,11 @@ namespace CoursesAPI
             _assignmentGrades = _uow.GetRepository<AssGrade>();
 
         }
-
+        /// <summary>
+        /// Returns a list of specific courses teachers
+        /// </summary>
+        /// <param name="courseInstanceID"></param>
+        /// <returns></returns>
         public List<PersonDTO> GetCourseTeachers(int courseInstanceID)
         {
             _courseInstances.GetCourseInstanceByID(courseInstanceID);
@@ -61,7 +65,11 @@ namespace CoursesAPI
             }
             return teachers;
         }
-
+        /// <summary>
+        /// Returns a list of a specific courses students person info
+        /// </summary>
+        /// <param name="courseInstanceID"></param>
+        /// <returns></returns>
         public List<PersonDTO> GetCourseStudents(int courseInstanceID)
         {
             _courseInstances.GetCourseInstanceByID(courseInstanceID);
@@ -84,25 +92,46 @@ namespace CoursesAPI
                 };
                 students.Add(pDTO);
             }
-            return students;
+            return students;        
         }
+        /// <summary>
+        /// Returns a list of a specific courses student registrations
+        /// </summary>
+        /// <param name="courseInstanceID"></param>
+        /// <returns></returns>
+        public List<StudentRegistration> GetCourseStudentRegistrations(int courseInstanceID)
+        {
+            _courseInstances.GetCourseInstanceByID(courseInstanceID);
 
+            return (from t in _studentRegistrations.All()
+                          where t.CourseInstanceID == courseInstanceID
+                          && t.Status == 1
+                          select t).ToList();        
+        }
+        /// <summary>
+        /// Returns course instances on a specific semester
+        /// </summary>
+        /// <param name="semester"></param>
+        /// <returns></returns>
         public List<CourseInstanceDTO> GetCourseInstancesOnSemester(string semester)
         {
-            // TODO:
-            return null;
+
+            return (from c in _courseInstances.All()
+                    join t in _teacherRegistrations.All() on c.ID equals t.CourseInstanceID
+                    join ct in _courseTemplates.All() on c.CourseID equals ct.CourseID
+                    join p in _persons.All() on t.SSN equals p.SSN
+                    where c.SemesterID == semester
+                    && t.Type == 1
+                    select new CourseInstanceDTO
+                    {
+                        CourseInstanceID = c.ID,
+                        CourseID = c.CourseID,
+                        Name = ct.Name,
+                        MainTeacher = p.Name
+                    }).ToList();         
         }
 
-        public List<CourseInstanceDTO> GetSemesterCourses(string semester)
-        {
-            // TODO
-            return null;
-        }
-
-        /////////////////////////////////////////////////////////////////////////
-        //////////////////Teacher functions//////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////
-
+  
         /// <summary>
         /// Add assignment to course
         /// </summary>
@@ -120,8 +149,7 @@ namespace CoursesAPI
             if (assignment != null)
             {
                 throw new AppObjectNotFoundException("Assignment name already exists");
-            }
-                
+            }                
 
             var assignmentTag = _assignmentTags.GetAssignmentTag(model.Tag);
             
@@ -131,6 +159,7 @@ namespace CoursesAPI
                 throw new AppObjectNotFoundException("Assignment Tag does not exist, please create it before creating assignment!");
             }
 
+            
             //Create new assignment and save
             Assignment ass = new Assignment
             {
@@ -287,28 +316,8 @@ namespace CoursesAPI
 
             return assignmentGrades;
         }
-        /// <summary>
-        /// Teacher: Get final grades of students in course
-        /// </summary>
-        /// <param name="courseInstanceID"></param>
-        /// <returns></returns>
-        public List<AssGradeDTO> GetFinalGradesForAllStudents(int courseInstanceID)
-        {
-            //Business rule 0: Operations on a course must use a valid course ID.
-            var course = _courseInstances.GetCourseInstanceByID(courseInstanceID);
-
-            return null;
-
-
-        }
-
         
-
-
-        /////////////////////////////////////////////////////////////////////////
-        //////////////////Student functions//////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////
-
+        
         /// <summary>
         /// Student: Get grade for a single assignment
         /// </summary>
@@ -352,7 +361,7 @@ namespace CoursesAPI
 
         }
         /// <summary>
-        /// Student: Get grades for all assignments in specific course
+        ///  Get grades for all assignments in specific course for a specific Student
         /// </summary>
         /// <param name="courseInstanceID"></param>
         /// <param name="assignmentID"></param>
@@ -381,21 +390,72 @@ namespace CoursesAPI
                               AssignmentID = a.ID,
                               AssignmentTag = a.Tag,
                               CourseInstanceID = courseInstanceID,
+                              Required = a.Required,
                               Percentage = a.Percentage,
                               Grade = g.Grade
                           }
                           ).ToList();
             return assignmentGrades;
-        }    
- 
-        public List<GradeListDTO> GetFinalGrade(int courseInstanceID, int studentID)
-        {
+        }
 
+        /// <summary>
+        /// Returns the final grade of one studento
+        /// </summary>
+        /// <param name="courseInstanceID"></param>
+        /// <param name="studentID"></param>
+        /// <returns></returns>
+        public FinalGradeDTO GetFinalGradeForSingleStudent(int courseInstanceID, int studentID)
+        {
+            return GetFinalGradesForAllStudents(courseInstanceID)
+                .Where(s => s.StudentRegistrationID == studentID)
+                .SingleOrDefault();
+        }
+        /// <summary>
+        /// Get final grade for all students in a course
+        /// </summary>
+        /// <param name="courseInstanceID"></param>
+        /// <returns></returns>
+        public List<FinalGradeDTO> GetFinalGradesForAllStudents(int courseInstanceID)
+        {
+            List<FinalGradeDTO> classFinalGrade = new List<FinalGradeDTO>();
+
+            List<StudentRegistration> studs = GetCourseStudentRegistrations(courseInstanceID);
+
+            foreach (StudentRegistration s in studs)
+            {
+                classFinalGrade.Add(GetFinalGrade(courseInstanceID, s.ID));
+            }            
+
+            classFinalGrade.OrderByDescending(g => g.Grade);
+            int index = 1;
+            int gradeCount = classFinalGrade.Count();
+            double classAverageGrade = classFinalGrade.Sum(s => s.Grade) / gradeCount;
+
+            foreach (FinalGradeDTO f in classFinalGrade)
+            {
+                f.MyRanking = index + " / " + gradeCount;
+                f.ClassAverage = classAverageGrade;
+                index++;
+            }
+
+            return classFinalGrade;
+        }
+
+        /// <summary>
+        ///  Get final grade for single student
+        /// </summary>
+        /// <param name="courseInstanceID"></param>
+        /// <param name="studentID"></param>
+        /// <returns></returns>
+        public FinalGradeDTO GetFinalGrade(int courseInstanceID, int studentID)
+        {
             //Business rule 0: Operations on a course must use a valid course ID.
             var course = _courseInstances.GetCourseInstanceByID(courseInstanceID);
+            var courseTemplate = _courseTemplates.GetCourse(course.CourseID);
 
             //Business rule 1: Student must exist
             var student = _studentRegistrations.GetStudentRegistration(studentID);
+            var studentPerson = _persons.GetPerson(student.SSN);
 
             List<GradeListDTO> allStudentGrades = GetAllSingleStudentGrades(courseInstanceID, studentID);            
             
@@ -403,17 +463,17 @@ namespace CoursesAPI
 
             List<GradeListDTO> trimmedGrades = new List<GradeListDTO>();
 
+            double finalGrade = 0;
+            double totalPercentage = 0;
+            double assignmentsPercTotal = 0;
+            bool coursePassed = true;
+            bool readyToGrade = true;
+          
             //Go over all tags and pick the amount of items that should be counted, depending on grade.
             foreach(AssTag i in allTagsForCourse)
             {
-               List<GradeListDTO> tempItems =  
-                   allStudentGrades.Where(g => g.AssignmentTag == i.Name).OrderByDescending(g => g.Grade).Take(i.NoToGrade).ToList();
-
-                foreach(GradeListDTO k in tempItems)
-                {
-                    trimmedGrades.Add(k);
-                   
-                }
+               //List<GradeListDTO> tempItems =  
+                trimmedGrades.AddRange(allStudentGrades.Where(g => g.AssignmentTag == i.Name).OrderByDescending(g => g.Grade).Take(i.NoToGrade).ToList());        
             }
             //take those who dont have a tag
             foreach(GradeListDTO i in allStudentGrades)
@@ -424,14 +484,52 @@ namespace CoursesAPI
                 }
             }
 
+            //Work through our list of grades we use for final
+            foreach(GradeListDTO i in trimmedGrades)
+            {
+                finalGrade += i.Grade * i.Percentage / 100;
+                totalPercentage += i.Percentage;
 
+                if(i.Required == true && i.Grade < 4.75)
+                {
+                    coursePassed = false;
+                }              
+            }
+            
 
+            //Grade should be in even or .5 numbers.
+            finalGrade = Math.Round(finalGrade * 2, MidpointRounding.AwayFromZero) / 2;
 
-            return trimmedGrades;
+            if(finalGrade < 4.75 * totalPercentage/100)
+                coursePassed = false;
 
+            if (finalGrade > 10)
+                finalGrade = 10;
 
+            
+
+            //The course does not have assignments graded to 100%
+            if(totalPercentage < 100)
+            {
+                finalGrade = 0;
+                readyToGrade = false;
+                coursePassed = false;
+            }
+
+            return new FinalGradeDTO
+            {
+                StudentRegistrationID = student.ID,
+                StudentName = studentPerson.Name,
+                CourseName = courseTemplate.Name,
+                CourseID = course.CourseID,
+                PercentageReady = totalPercentage,
+                ReadyToGrade = readyToGrade,
+                Grade = finalGrade,
+                Passed = coursePassed
+            };
         }
 
+       
       
 	}
 }

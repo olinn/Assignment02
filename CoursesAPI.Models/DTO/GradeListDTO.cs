@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace CoursesAPI.Models
 {
+    /// <summary>
+    /// DTO class to return grades
+    /// </summary>
     public class GradeListDTO
     {
 
@@ -44,5 +47,9 @@ namespace CoursesAPI.Models
         /// Assignment Percentage
         /// </summary>
         public double Percentage { get; set; }
+        /// <summary>
+        /// Is this assignment required or not
+        /// </summary>
+        public bool Required { get; set; }
     }
 }

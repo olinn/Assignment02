@@ -2,6 +2,9 @@
 
 namespace CoursesAPI.Models
 {
+    /// <summary>
+    /// DTO object to return Assignment grade to frontend
+    /// </summary>
     public class AssGradeDTO
     {
         /// <summary>
