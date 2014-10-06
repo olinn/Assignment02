@@ -20,5 +20,9 @@ namespace CoursesAPI.Models.ViewModels
         /// Student status
         /// </summary>
         public int Status { get; set; }
+        /// <summary>
+        /// Student's username for web
+        /// </summary>
+        public string UserName { get; set; }
     }
 }

@@ -22,5 +22,9 @@
         /// Status, 1 = active, 0 = inactive
         /// </summary>
         public int Status { get; set; }
+        /// <summary>
+        /// Student's username for web
+        /// </summary>
+        public string UserName { get; set; }
     }
 }
