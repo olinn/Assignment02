@@ -388,6 +388,19 @@ namespace CoursesAPI
 
             return assignmentGrades;
         }
+
+
+        /// <summary>
+        /// Student: Matches username with studentID
+        /// </summary>
+        /// <param name="studentID"></param>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        public bool MatchUserWithStudent(int studentID, string username)
+        {
+            StudentRegistration student = _studentRegistrations.All().SingleOrDefault(s => s.ID == studentID);
+            return student.UserName == username;
+        }
         
         
         /// <summary>

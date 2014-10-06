@@ -233,14 +233,19 @@ namespace CoursesAPI.Controllers
         {
             var principal = User as ClaimsPrincipal;
 
-            //Filter out the username from the claims object to use in DB query
+            //Filter out username for the current user
             var username = (from c in principal.Identities.First().Claims.Where(s => s.Type == "name")
                             select c.Value).ToList()[0];
 
-            
-            var result = _service.GetAllSingleStudentGrades(courseInstanceID, studentID);
+            if (_service.MatchUserWithStudent(studentID, username))
+            {
+                var result = _service.GetAllSingleStudentGrades(courseInstanceID, studentID);
 
-            return Ok(result);
+                return Ok(result);
+            }
+
+            return Unauthorized();
+
         }
         /// <summary>
         /// Returns final grade for specific student in a specific course
@@ -252,13 +257,20 @@ namespace CoursesAPI.Controllers
         [Route("{courseInstanceID:int}/student/{studentID:int}/finalgrade")]
         public IHttpActionResult GetFinalGrades(int courseInstanceID, int studentID)
         {
-            var result = _service.GetFinalGradeForSingleStudent(courseInstanceID, studentID);
+            var principal = User as ClaimsPrincipal;
 
-            return Ok(result);
+            //Filter out username for the current user
+            var username = (from c in principal.Identities.First().Claims.Where(s => s.Type == "name")
+                            select c.Value).ToList()[0];
+
+            if (_service.MatchUserWithStudent(studentID, username))
+            {
+                var result = _service.GetFinalGradeForSingleStudent(courseInstanceID, studentID);
+
+                return Ok(result);
+            }
+
+            return Unauthorized();
         }
-
-      
-
-
 	}
 }
