@@ -278,6 +278,7 @@ namespace CoursesAPI
                             AssignmentName = x.Name,
                             AssignmentID = r.AssignmentID,
                             CourseInstanceID = x.CourseInstanceID,
+                            Percentage = x.Percentage,
                             Grade = r.Grade
                           }
                           ).ToList();
@@ -343,6 +344,7 @@ namespace CoursesAPI
                 StudentName = studentPerson.Name,
                 AssignmentName = assignment.Name,
                 AssignmentID = grade.AssignmentID,
+                Percentage = assignment.Percentage,
                 Grade = grade.Grade,
                 NumberInClass = place,
                 Average = average
@@ -379,13 +381,14 @@ namespace CoursesAPI
                               AssignmentID = a.ID,
                               AssignmentTag = a.Tag,
                               CourseInstanceID = courseInstanceID,
+                              Percentage = a.Percentage,
                               Grade = g.Grade
                           }
                           ).ToList();
             return assignmentGrades;
         }    
  
-        public AssGradeDTO GetFinalGrade(int courseInstanceID, int studentID)
+        public List<GradeListDTO> GetFinalGrade(int courseInstanceID, int studentID)
         {
 
             //Business rule 0: Operations on a course must use a valid course ID.
@@ -394,13 +397,37 @@ namespace CoursesAPI
             //Business rule 1: Student must exist
             var student = _studentRegistrations.GetStudentRegistration(studentID);
 
-            List<GradeListDTO> allStudentGrades = GetAllSingleStudentGrades(courseInstanceID, studentID);
+            List<GradeListDTO> allStudentGrades = GetAllSingleStudentGrades(courseInstanceID, studentID);            
+            
+            List<AssTag> allTagsForCourse = _assignmentTags.GetAssignmentTags(courseInstanceID);
 
-            List<String> tagList = new List<String>();
+            List<GradeListDTO> trimmedGrades = new List<GradeListDTO>();
 
-           
+            //Go over all tags and pick the amount of items that should be counted, depending on grade.
+            foreach(AssTag i in allTagsForCourse)
+            {
+               List<GradeListDTO> tempItems =  
+                   allStudentGrades.Where(g => g.AssignmentTag == i.Name).OrderByDescending(g => g.Grade).Take(i.NoToGrade).ToList();
 
-            return null;
+                foreach(GradeListDTO k in tempItems)
+                {
+                    trimmedGrades.Add(k);
+                   
+                }
+            }
+            //take those who dont have a tag
+            foreach(GradeListDTO i in allStudentGrades)
+            {
+                if(i.AssignmentTag == null || i.AssignmentTag == "")
+                {
+                    trimmedGrades.Add(i);
+                }
+            }
+
+
+
+
+            return trimmedGrades;
 
 
         }

@@ -35,7 +35,14 @@ namespace CoursesAPI.Models
         /// Student grade
         /// </summary>
         public double Grade { get; set; }
-
+        /// <summary>
+        /// AssignmentTag
+        /// </summary>
         public string AssignmentTag { get; set; }
+
+        /// <summary>
+        /// Assignment Percentage
+        /// </summary>
+        public double Percentage { get; set; }
     }
 }

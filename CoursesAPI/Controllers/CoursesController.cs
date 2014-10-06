@@ -159,6 +159,15 @@ namespace CoursesAPI.Controllers
             return Ok(result);
         }
 
+        [HttpGet]
+        [Route("{courseInstanceID:int}/student/{studentID:int}/getFinalGrades")]
+        public IHttpActionResult GetFinalGrades(int courseInstanceID, int studentID)
+        {
+            var result = _service.GetFinalGrade(courseInstanceID, studentID);
+
+            return Ok(result);
+        }
+
       
 
 
