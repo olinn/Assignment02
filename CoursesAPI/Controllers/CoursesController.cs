@@ -74,7 +74,7 @@ namespace CoursesAPI.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("{courseInstanceID:int}/tag")]
+        [Route("{courseInstanceID:int}/tags")]
         public IHttpActionResult AddAssignmentTag(int courseInstanceID, AddAssignmentTagViewModel model)
         {
             if(!ModelState.IsValid || model == null)
@@ -86,6 +86,18 @@ namespace CoursesAPI.Controllers
                 var result = _service.AddAssignmentTag(courseInstanceID, model);
                 return Created("Tag succesfully added", result);
             }
+        }
+        /// <summary>
+        /// Returns all tags for a specific course
+        /// </summary>
+        /// <param name="courseInstanceID"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{courseInstanceID:int}/tags")]
+        public IHttpActionResult GetAssignmentTags(int courseInstanceID)
+        { 
+            var result = _service.GetAssignmentTags(courseInstanceID);
+            return Created("Tags succesfully retrieved", result);
         }
 
         /// <summary>

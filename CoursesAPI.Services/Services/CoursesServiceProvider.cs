@@ -222,8 +222,26 @@ namespace CoursesAPI
                 Name = model.Name,
                 NoToGrade = model.NoToGrade,
                 CourseInstanceID = courseInstanceID
-            };           
+            };       
+        }
 
+        public List<AssTagDTO> GetAssignmentTags(int courseInstanceID)
+        {
+
+            //Business rule 0: Operations on a course must use a valid course ID.
+            _courseInstances.GetCourseInstanceByID(courseInstanceID);
+
+             List<AssTagDTO> assTagList = (
+                from a in _assignmentTags.All()
+                where a.CourseInstanceID == courseInstanceID
+                select new AssTagDTO {
+                    Name = a.Name,
+                    NoToGrade = a.NoToGrade,
+                    CourseInstanceID = a.CourseInstanceID
+                }
+                ).ToList();
+
+             return assTagList;
         }
 
         /// <summary>
