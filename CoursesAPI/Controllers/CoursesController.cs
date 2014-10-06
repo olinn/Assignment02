@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
@@ -153,7 +154,13 @@ namespace CoursesAPI.Controllers
         [Authorize(Roles = "student")]
         public IHttpActionResult GetAllGrades(int courseInstanceID, int studentID)
         {
+            var principal = User as ClaimsPrincipal;
 
+            //Filter out the username from the claims object to use in DB query
+            var username = (from c in principal.Identities.First().Claims.Where(s => s.Type == "name")
+                            select c.Value).ToList()[0];
+
+            
             var result = _service.GetAllSingleStudentGrades(courseInstanceID, studentID);
 
             return Ok(result);
