@@ -27,6 +27,11 @@ namespace CoursesAPI.Models
         /// Grade for assignment
         /// </summary>
         public double Grade { get; set; }
+
+        /// <summary>
+        /// Assignment percentage value of final grade
+        /// </summary>
+        public double Percentage { get; set; }
         /// <summary>
         /// What number in class this grade is, not always applicable
         /// </summary>

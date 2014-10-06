@@ -82,6 +82,13 @@ namespace CoursesAPI.Services.Extensions
             return person;
         }
 
+        public static List<AssTag> GetAssignmentTags(this IRepository<AssTag> repo, int courseInstanceID)
+        {
+            List<AssTag> allTags = repo.All().Where(t => t.CourseInstanceID == courseInstanceID).ToList();
+
+            return allTags;
+        }
+
             
         
     }

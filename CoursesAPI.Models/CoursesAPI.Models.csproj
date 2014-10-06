@@ -105,6 +105,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DTO\AssGradeDTO.cs" />
+    <Compile Include="DTO\FinalGradeDTO.cs" />
     <Compile Include="DTO\GradeListDTO.cs" />
     <Compile Include="DTO\PersonDTO.cs" />
     <Compile Include="ViewModels\AddGradeViewModel.cs" />
