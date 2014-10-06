@@ -1,5 +1,8 @@
 ﻿namespace CoursesAPI.Services.Models.Entities
 {
+    /// <summary>
+    /// Entity class for Assignment grade
+    /// </summary>
     public class AssGrade
     {
         /// <summary>
