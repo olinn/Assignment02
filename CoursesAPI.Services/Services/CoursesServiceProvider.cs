@@ -66,6 +66,60 @@ namespace CoursesAPI
             return teachers;
         }
         /// <summary>
+        /// Add a list of students to a course
+        /// </summary>
+        /// <param name="courseInstanceID"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public List<StudentRegistrationDTO> AddListOfStudents(int courseInstanceID, List<AddStudentViewModel> model)
+        {
+            List<StudentRegistrationDTO> studentList = new List<StudentRegistrationDTO>();
+            foreach(AddStudentViewModel i in model)
+            {
+                studentList.Add(AddStudent(courseInstanceID,i));
+            }
+
+            return studentList;
+
+        }
+        /// <summary>
+        /// Adds a student to a specific course
+        /// </summary>
+        /// <param name="courseInstanceID"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public StudentRegistrationDTO AddStudent(int courseInstanceID, AddStudentViewModel model)
+        {
+            //Course must exist
+            var course = _courseInstances.GetCourseInstanceByID(courseInstanceID);
+            //SSN of student must exist
+            var person =  _persons.GetPerson(model.SSN);
+
+            if(courseInstanceID != model.CourseInstanceID)
+            {
+                throw new AppObjectNotFoundException("CourseInstanceIDs do not match");
+            }
+            if(person != null && course != null)
+            {
+                StudentRegistration sr = new StudentRegistration
+                {
+                    CourseInstanceID = courseInstanceID,
+                    SSN = model.SSN,
+                    Status = model.Status,
+                    UserName = model.UserName
+                };
+                _studentRegistrations.Add(sr);
+                _uow.Save();
+            }
+
+            return new StudentRegistrationDTO {
+                CourseInstanceID = model.CourseInstanceID,
+                SSN = model.SSN,
+                Status = model.Status,
+                UserName = model.UserName
+            };
+        }
+        /// <summary>
         /// Returns a list of a specific courses students person info
         /// </summary>
         /// <param name="courseInstanceID"></param>

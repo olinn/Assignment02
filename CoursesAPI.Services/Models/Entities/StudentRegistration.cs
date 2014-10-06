@@ -23,6 +23,9 @@ namespace CoursesAPI.Services.Models.Entities
         /// Status of the student. Shows if he's active or not
         /// </summary>
         public int Status { get; set; }
-        
+        /// <summary>
+        /// Web username for student
+        /// </summary>
+        public string UserName { get; set; }
     }
 }

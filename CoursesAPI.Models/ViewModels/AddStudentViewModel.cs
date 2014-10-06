@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-namespace CoursesAPI.Models.ViewModels
+namespace CoursesAPI.Models
 {
     public class AddStudentViewModel
     {
