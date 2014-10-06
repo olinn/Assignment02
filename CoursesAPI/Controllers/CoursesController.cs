@@ -56,6 +56,41 @@ namespace CoursesAPI.Controllers
         //////////////////Teacher functions//////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////
 
+
+        [HttpPost]
+        [Route("{courseInstanceID:int}/studentslist")]
+        public IHttpActionResult AddListOfStudents(int courseInstanceID, List<AddStudentViewModel> model)
+        {
+            if(!ModelState.IsValid ||model == null)
+            {
+                return BadRequest(ModelState);
+            }
+            else
+            {
+                var result = _service.AddListOfStudents(courseInstanceID, model);
+                return Created("Students successfully created", result);
+            }
+        }
+        /// <summary>
+        /// Add a student to a specific course
+        /// </summary>
+        /// <param name="courseInstanceID"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("{courseInstanceID:int}/student")]
+        public IHttpActionResult AddStudent(int courseInstanceID, AddStudentViewModel model)
+        {
+            if(!ModelState.IsValid || model == null)
+            {
+                return BadRequest(ModelState);
+            }
+            else
+            {
+                var result = _service.AddStudent(courseInstanceID, model);
+                return Created("Student succesfully created", result);
+            }
+        }
         /// <summary>
         /// Teacher: Add new assignment
         /// </summary>
@@ -73,8 +108,9 @@ namespace CoursesAPI.Controllers
             }
             else
             {
+                
                 var result = _service.AddAssignmentOnCourse(courseInstanceID, model);
-                return Created("Assignment succesfully created", result);
+                return Created("Assignment succesfully created", result);                           
             }
                 
         }
