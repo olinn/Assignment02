@@ -70,8 +70,22 @@ namespace CoursesAPI.Tests.Services
             };
 
             return students;
-        } 
+        }
 
+        public static List<CourseTemplate> GetCourseTemplates()
+        {
+            var cTemplates = new List<CourseTemplate>
+            {
+                new CourseTemplate
+                {
+                    CourseID = "T-514-VEFT",
+                    Name = "Vefþjónustur",
+                    Description = "Apar og allskonar"
+
+                }
+            };
+            return cTemplates;
+        }
 
     }
 }

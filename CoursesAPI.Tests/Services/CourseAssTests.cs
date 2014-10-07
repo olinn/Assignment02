@@ -64,7 +64,7 @@ namespace CoursesAPI.Tests.Services
 
             AssTagDTO assTDTO = _service.AddAssignmentTag(courseInstanceID, assTagModel);
 
-            Assert.AreEqual(assTagModel.Name, assTDTO.Name);
+            Assert.AreEqual(assTagModel.Name, assTDTO.Name, "AssTag added and asstag queried dont match");
         }
 
         [TestMethod]
@@ -81,7 +81,7 @@ namespace CoursesAPI.Tests.Services
             };
 
             AssignmentDTO assDTO = _service.AddAssignmentOnCourse(courseInstanceID, assVM);
-            Assert.AreEqual(assVM.Tag, assDTO.Tag);
+            Assert.AreEqual(assVM.Tag, assDTO.Tag, "AssTag added to course and then queried dont match");
         }
 
         [TestMethod]

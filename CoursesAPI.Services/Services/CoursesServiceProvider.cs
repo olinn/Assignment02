@@ -279,6 +279,11 @@ namespace CoursesAPI
             };       
         }
 
+        /// <summary>
+        /// Get assignment tags for a given course instance
+        /// </summary>
+        /// <param name="courseInstanceID"></param>
+        /// <returns></returns>
         public List<AssTagDTO> GetAssignmentTags(int courseInstanceID)
         {
 
