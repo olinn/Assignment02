@@ -56,7 +56,13 @@ namespace CoursesAPI.Controllers
         //////////////////Teacher functions//////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////
 
-
+        
+        /// <summary>
+        /// Add a list of students
+        /// </summary>
+        /// <param name="courseInstanceID"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("{courseInstanceID:int}/studentslist")]
         public IHttpActionResult AddListOfStudents(int courseInstanceID, List<AddStudentViewModel> model)
